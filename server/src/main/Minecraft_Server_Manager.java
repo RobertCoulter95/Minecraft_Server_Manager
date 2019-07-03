@@ -1,3 +1,5 @@
+package main;
+
 import java.io.File;
 
 public class Minecraft_Server_Manager {
