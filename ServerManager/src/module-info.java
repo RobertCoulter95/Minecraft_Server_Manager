@@ -1,0 +1,3 @@
+module ServerManaer{
+    exports main;
+}
