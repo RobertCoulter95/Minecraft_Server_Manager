@@ -1,4 +1,4 @@
-package main;
+package Main_GUI;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -47,7 +47,7 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(String args) {
+        Application.launch(args);
     }
 }
