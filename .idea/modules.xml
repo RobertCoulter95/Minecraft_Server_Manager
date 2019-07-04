@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Minecraft_Server_Manager.iml" filepath="$PROJECT_DIR$/.idea/Minecraft_Server_Manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Graphics/Graphics.iml" filepath="$PROJECT_DIR$/Graphics/Graphics.iml" />
     </modules>
   </component>
 </project>
