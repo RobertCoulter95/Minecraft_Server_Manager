@@ -8,13 +8,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import main.Server;
-
-import java.util.Scanner;
+import java.io.IOException;
 
 public class Main extends Application {
-
+public static long numberOfServers;
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 
         Server newServer = new Server();
         Scene scene = new Scene(CreateServerUIBox(newServer),400,400);
@@ -35,6 +34,7 @@ public class Main extends Application {
 
 
     public static void main(String args) {
+        numberOfServers = Long.parseLong(args);
         Application.launch(args);
     }
 }
