@@ -1,11 +1,14 @@
 package Main_GUI;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Server;
 
@@ -15,13 +18,12 @@ import java.nio.file.Paths;
 
 public class Main extends Application {
 public static long numberOfServers;
+public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath()));
     @Override
     public void start(Stage primaryStage) throws IOException {
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(new Button("Hello"));
 
 
-        Scene serverSelect = new Scene(hbox);
+        Scene serverSelect = new Scene(CreateServerSelection(primaryStage),350,500);
 
         primaryStage.setScene(serverSelect);
         primaryStage.setTitle("My window!");
@@ -37,24 +39,40 @@ public static long numberOfServers;
     }
 
 
-    public static GridPane CreateServerSelection(){
-        File[] directories = new File(String.valueOf(Paths.get(".").toAbsolutePath())).listFiles(File::isDirectory);
+    public static VBox CreateServerSelection(Stage primarystage){
+
+        File file = CurrentWorkingDirectory;
+        String[] directories = file.list();
         int numberOfDirectories = directories.length;
-        int count = 0;
-        GridPane pane = new GridPane();
-        for (int i=0;i<2;i++){
-            for (int x=0;x<4;x++){
-                pane.add(new Button(directories[count].getName()),i,x);
-                if (++count==numberOfDirectories)
-                    break;
-            }
-            if (count==numberOfDirectories)
+
+
+        //Count starts at 1 to avoid the .DS folder at 0.
+        int count = 1;
+        VBox box = new VBox();
+        box.setPadding(new Insets(50));
+        for (int i=0;i<10;i++) {
+            Button tmp = new Button();
+            tmp.setPadding(new Insets(15));
+            tmp.setMinSize(180, 70);
+            tmp.setMaxSize(180, 70);
+            tmp.setText(directories[count]);
+            box.getChildren().addAll(tmp);
+            if (++count == numberOfDirectories)
                 break;
+
         }
-        return pane;
+        System.out.println(numberOfDirectories);
+        if (numberOfDirectories<9){
+            Button tmp = new Button("Create Server");
+            tmp.setPadding(new Insets(15));
+            tmp.setMinSize(180, 70);
+            tmp.setMaxSize(180, 70);
+            box.getChildren().add(tmp);
+        }
+
+        return box;
     }
     public static void main(String args) {
-        numberOfServers = Long.parseLong(args);
         Application.launch(args);
     }
 }

@@ -15,9 +15,8 @@ public class Executor {
     public static void main(String[] args) throws IOException, InterruptedException {
         //count the number of servers
         long count = Files.find(Paths.get("/"),1,(path, attributes)->attributes.isDirectory()).count()-1;
-
-
-
+        Server server = new Server("server");
+        System.out.println(server.getProperty("world-seed"));
         //Calls module Graphics, to open graphics.
 
         Thread ThreadedUI = new Thread(){
