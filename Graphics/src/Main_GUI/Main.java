@@ -17,9 +17,11 @@ public class Main extends Application {
 public static long numberOfServers;
     @Override
     public void start(Stage primaryStage) throws IOException {
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(new Button("Hello"));
 
-        Server newServer = new Server();
-        Scene serverSelect = new Scene(CreateServerSelection(),600,600);
+
+        Scene serverSelect = new Scene(hbox);
 
         primaryStage.setScene(serverSelect);
         primaryStage.setTitle("My window!");
