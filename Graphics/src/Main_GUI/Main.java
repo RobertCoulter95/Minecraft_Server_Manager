@@ -53,10 +53,10 @@ public static Server server;
 
 
         //Count starts at 1 to avoid the .DS folder at 0.
-        int count = 1;
+        int count = 0;
         VBox box = new VBox();
         box.setPadding(new Insets(50));
-        for (int i=0;i<10;i++) {
+        for (int i=0;i<numberOfDirectories;i++) {
             Button tmp = new Button();
             tmp.setPadding(new Insets(15));
             tmp.setMinSize(180, 70);

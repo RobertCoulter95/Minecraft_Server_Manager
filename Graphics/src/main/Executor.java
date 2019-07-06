@@ -48,8 +48,8 @@ public class Executor extends Application{
                 }
             }
         };
-        //ThreadedServer.start();
-        ThreadedUI.start();
+        ThreadedServer.start();
+        //ThreadedUI.start();
 
         //System.out.println(System.getProperty("java.home"));
 
