@@ -19,27 +19,33 @@ import java.nio.file.Paths;
 public class Main extends Application {
 public static long numberOfServers;
 public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath()));
+public static Server server;
     @Override
     public void start(Stage primaryStage) throws IOException {
 
+        Scene scene = propertiesScene();
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-        Scene serverSelect = new Scene(CreateServerSelection(primaryStage),350,500);
-
-        primaryStage.setScene(serverSelect);
-        primaryStage.setTitle("My window!");
+        primaryStage.setScene(serverSelectionScene());
         primaryStage.show();
 
     }
 
-    public static GridPane CreateServerUIBox(Server server){
-        GridPane pane = new GridPane();
-        Button btn1 = new Button(server.World);
-        pane.add(btn1,0,0);
-        return pane;
+
+    public Scene propertiesScene() throws IOException {
+        Object[] properties = server.displayProperties();
+        VBox box = new VBox();
+        for (int i=0;i<properties.length;i++) {
+            Label tmp = new Label(properties[i].toString());
+            box.getChildren().add(tmp);
+        }
+        Scene scene = new Scene(box,400,400);
+        return scene;
+
     }
 
-
-    public static VBox CreateServerSelection(Stage primarystage){
+    public Scene serverSelectionScene() throws IOException{
 
         File file = CurrentWorkingDirectory;
         String[] directories = file.list();
@@ -69,10 +75,11 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
             tmp.setMaxSize(180, 70);
             box.getChildren().add(tmp);
         }
-
-        return box;
+        Scene scene = new Scene(box,400,600);
+        return scene;
     }
-    public static void main(String args) {
+    public static void main(String args,Server serv) throws IOException {
+        server = serv;
         Application.launch(args);
     }
 }

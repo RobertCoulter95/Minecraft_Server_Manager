@@ -1,7 +1,14 @@
 package main;
 
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Set;
 
 public class Server {
     String serverName;
@@ -53,4 +60,22 @@ public class Server {
         return key;
 
     }
+
+    public Object[] displayProperties() throws IOException {
+        FileInputStream in = new FileInputStream(serverName + "/server.properties");
+        Properties props = new Properties();
+        props.load(in);
+        in.close();
+
+        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
+        Object[] key = props.stringPropertyNames().toArray();
+        System.out.println(key[8].toString());
+        props.store(out,null);
+        out.close();
+        return key;
+
+
+    }
+
+
 }
