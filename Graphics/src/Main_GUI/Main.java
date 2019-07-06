@@ -1,6 +1,8 @@
 package Main_GUI;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,41 +20,40 @@ import java.nio.file.Paths;
 
 public class Main extends Application {
 public static long numberOfServers;
+Scene scene2;
+public static Server[] serverList;
 public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath()));
-public static Server server;
+
+    public static void main(String[] args,Server[] serverPass) throws IOException {
+        serverList = serverPass;
+        Application.launch(args);
+
+    }
     @Override
     public void start(Stage primaryStage) throws IOException {
-
-        Scene scene = propertiesScene();
-        primaryStage.setScene(scene);
+        primaryStage.setScene(serverSelectionScene(primaryStage));
         primaryStage.show();
-
-        primaryStage.setScene(serverSelectionScene());
-        primaryStage.show();
-
     }
 
 
-    public Scene propertiesScene() throws IOException {
-        Object[] properties = server.displayProperties();
+    private Scene propertiesScene(int indexOfServer) throws IOException {
+        Object[] properties = serverList[indexOfServer].displayProperties();
         VBox box = new VBox();
         for (int i=0;i<properties.length;i++) {
             Label tmp = new Label(properties[i].toString());
             box.getChildren().add(tmp);
         }
-        Scene scene = new Scene(box,400,400);
-        return scene;
+        Scene scene3 = new Scene(box,400,400);
+        return scene3;
 
     }
 
-    public Scene serverSelectionScene() throws IOException{
+    public Scene serverSelectionScene(Stage primaryStage) throws IOException{
 
         File file = CurrentWorkingDirectory;
         String[] directories = file.list();
         int numberOfDirectories = directories.length;
 
-
-        //Count starts at 1 to avoid the .DS folder at 0.
         int count = 0;
         VBox box = new VBox();
         box.setPadding(new Insets(50));
@@ -62,24 +63,23 @@ public static Server server;
             tmp.setMinSize(180, 70);
             tmp.setMaxSize(180, 70);
             tmp.setText(directories[count]);
+            tmp.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    try {
+                        primaryStage.setScene(propertiesScene(Server.indexOf(serverList,tmp.getText())));
+                        primaryStage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             box.getChildren().addAll(tmp);
             if (++count == numberOfDirectories)
                 break;
 
         }
-        System.out.println(numberOfDirectories);
-        if (numberOfDirectories<9){
-            Button tmp = new Button("Create Server");
-            tmp.setPadding(new Insets(15));
-            tmp.setMinSize(180, 70);
-            tmp.setMaxSize(180, 70);
-            box.getChildren().add(tmp);
-        }
         Scene scene = new Scene(box,400,600);
         return scene;
-    }
-    public static void main(String args,Server serv) throws IOException {
-        server = serv;
-        Application.launch(args);
     }
 }

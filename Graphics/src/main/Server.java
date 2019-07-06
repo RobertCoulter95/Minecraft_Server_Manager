@@ -6,32 +6,32 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
 
 public class Server {
+    private static int servercount =0;
+    private static String JavaLocation = System.getProperty("java.home") + "/bin/java";
     String serverName;
-    //Basic settings
-    public String World = "Minecraft world 1";
-    public File properties;
-    public boolean isRunning;
-    public int playerSlots;
-    public String gameMode;
-    public String levelSeed;
-
-    //Advanced settings
+    private File ServersDirectory;
     public String serverIP;
     public String serverPort;
     int memoryUsageMB;
+    Process p;
 
 
     public Server(String name) throws IOException {
         serverName = name;
+        ServersDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath())+"/"+serverName);
+        servercount++;
+        setProperties("server-port",Integer.toString(25565+servercount));
     }
 
     //Says duplicate code, but should cause no errors, as long as you dont have setproperties
     //and get property open at the same time.
+
     public void setProperties(String[]property, String[] values) throws IOException {
         FileInputStream in = new FileInputStream(serverName + "/server.properties");
         Properties props = new Properties();
@@ -43,6 +43,17 @@ public class Server {
         for (int i=0;i<property.length;i++){
             props.setProperty(property[i], values[i]);
         }
+        props.store(out, null);
+        out.close();
+    }
+    public void setProperties(String property, String values) throws IOException {
+        FileInputStream in = new FileInputStream(serverName + "/server.properties");
+        Properties props = new Properties();
+        props.load(in);
+        in.close();
+
+        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
+        props.setProperty(property, values);
         props.store(out, null);
         out.close();
     }
@@ -75,6 +86,38 @@ public class Server {
         return key;
 
 
+    }
+
+    public void startServer(){
+        Thread ThreadedServer = new Thread(){
+            public void run(){
+                ProcessBuilder pb = new ProcessBuilder(JavaLocation, "-jar", "server.jar", "Xmx512", "Xms512");
+                pb.directory(ServersDirectory);
+                System.out.println(pb.directory().toString());
+                try {
+                    p = pb.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        ThreadedServer.start();
+
+    }
+
+    public void stopServer(){
+        p.destroy();
+    }
+
+
+    public static int indexOf(Server[] server,String name){
+        for(int i=0;i<server.length;i++){
+            System.out.println(server[i].serverName);
+            if (server[i].serverName.equals(name)){
+                return i;
+            }
+        }
+        return -1;
     }
 
 
