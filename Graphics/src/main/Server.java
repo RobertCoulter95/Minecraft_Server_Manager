@@ -14,41 +14,42 @@ import java.util.Set;
 public class Server {
     private static int servercount =0;
     private static String JavaLocation = System.getProperty("java.home") + "/bin/java";
-    String serverName;
+    String serverName ="";
     private File ServersDirectory;
     public String serverIP;
     public String serverPort;
     int memoryUsageMB;
+    String[] propKeys;
+    FileOutputStream out;
+    Properties props;
+    Properties temp;
     Process p;
+    boolean hasSaved;
 
 
     public Server(String name) throws IOException {
+        props = new Properties();
         serverName = name;
         ServersDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath())+"/"+serverName);
         servercount++;
         setProperties("server-port",Integer.toString(25565+servercount));
+
+        FileInputStream in = new FileInputStream(serverName + "/server.properties");
+        props.load(in);
+        in.close();
+
+        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
+        props.store(out, null);
+        out.close();
+        setKeySet();
     }
 
     //Says duplicate code, but should cause no errors, as long as you dont have setproperties
     //and get property open at the same time.
 
-    public void setProperties(String[]property, String[] values) throws IOException {
-        FileInputStream in = new FileInputStream(serverName + "/server.properties");
-        Properties props = new Properties();
-        props.load(in);
-        in.close();
 
-        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
-
-        for (int i=0;i<property.length;i++){
-            props.setProperty(property[i], values[i]);
-        }
-        props.store(out, null);
-        out.close();
-    }
     public void setProperties(String property, String values) throws IOException {
         FileInputStream in = new FileInputStream(serverName + "/server.properties");
-        Properties props = new Properties();
         props.load(in);
         in.close();
 
@@ -58,27 +59,26 @@ public class Server {
         out.close();
     }
 
-    public String getProperty(String object) throws IOException {
-        FileInputStream in = new FileInputStream(serverName + "/server.properties");
-        Properties props = new Properties();
-        props.load(in);
-        in.close();
-
-        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
-        String key = props.getProperty("level-seed");
-        props.store(out,null);
-        out.close();
-        return key;
-
-    }
+//    public String getProperty(String object) throws IOException {
+//        FileInputStream in = new FileInputStream(serverName + "/server.properties");
+//        props = new Properties();
+//        props.load(in);
+//        in.close();
+//
+//        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
+//        String key = props.getProperty("level-seed");
+//        props.store(out,null);
+//        out.close();
+//        return key;
+//
+//    }
 
     public String[][] displayProperties() throws IOException {
         FileInputStream in = new FileInputStream(serverName + "/server.properties");
-        Properties props = new Properties();
         props.load(in);
         in.close();
 
-        FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
+        out = new FileOutputStream(serverName+"/server.properties");
         int length = props.stringPropertyNames().toArray().length;
         String[][] key = new String[2][length];
 
@@ -86,8 +86,9 @@ public class Server {
             key[0][i]=props.stringPropertyNames().toArray()[i].toString();
             key[1][i]=props.get(key[0][i]).toString();
         }
-        props.store(out,null);
-        out.close();
+        //props.store(out,null);
+        //out.close();
+        hasSaved = false;
         return key;
 
 
@@ -98,7 +99,6 @@ public class Server {
             public void run(){
                 ProcessBuilder pb = new ProcessBuilder(JavaLocation, "-jar", "server.jar", "Xmx512", "Xms512");
                 pb.directory(ServersDirectory);
-                System.out.println(pb.directory().toString());
                 try {
                     p = pb.start();
                 } catch (IOException e) {
@@ -117,7 +117,6 @@ public class Server {
 
     public static int indexOf(Server[] server,String name){
         for(int i=0;i<server.length;i++){
-            System.out.println(server[i].serverName);
             if (server[i].serverName.equals(name)){
                 return i;
             }
@@ -125,5 +124,48 @@ public class Server {
         return -1;
     }
 
+    public void initializeTempProperties() throws IOException {
+        FileInputStream in = new FileInputStream(serverName + "/server.properties");
+        temp = new Properties();
+        temp.load(in);
+        in.close();
 
+        out = new FileOutputStream(serverName+"/server.properties");
+        //props.store(out,null);
+    }
+
+
+
+    public void setTempProperties(String newValue,int z) throws IOException {
+        temp.setProperty(propKeys[z],newValue);
+    }
+
+    public void saveProperties() throws IOException {
+        temp.store(out,null);
+        hasSaved = true;
+        out.close();
+    }
+
+    public void saveOldProperties() throws IOException {
+        if (!hasSaved){
+            props.store(out,null);
+            out.close();
+        }
+    }
+
+    private Set<Object> getAllKeys(){
+        Set<Object> keys = props.keySet();
+        return keys;
+    }
+
+    public void setKeySet(){
+
+        Set<Object> keys = getAllKeys();
+        propKeys = new String[keys.size()];
+        int i =0;
+        for(Object k:keys){
+            String key = (String)k;
+            propKeys[i++]=key;
+        }
+    }
 }

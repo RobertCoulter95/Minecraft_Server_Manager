@@ -1,11 +1,15 @@
 package Main_GUI;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -24,6 +28,8 @@ public static long numberOfServers;
 Scene scene2;
 static int i;
 public static Server[] serverList;
+public static String[] propertiesTemp;
+
 public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath()));
 
     public static void main(String[] args,Server[] serverPass) throws IOException {
@@ -38,10 +44,12 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
     }
 
 
-    private Scene propertiesScene(int indexOfServer) throws IOException {
+    private Scene propertiesScene(int indexOfServer,Stage primaryStage) throws IOException {
         String[][] properties = serverList[indexOfServer].displayProperties();
+        propertiesTemp=properties[1];
         GridPane gridPane = new GridPane();
         ScrollPane scrollPane = new ScrollPane(gridPane);
+        serverList[indexOfServer].initializeTempProperties();
         int i =0;
         for (i=0;i<properties[0].length;i++) {
             Label tmp = new Label(properties[0][i]);
@@ -52,7 +60,45 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
             gridPane.add(tmp,0,i);
             gridPane.add(txt,1,i);
         }
-        gridPane.add(new Button("Save Settings"),0,i);
+        Button save = new Button("Save settings");
+        boolean hasSaved = false;
+        save.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                int z=0;
+                for (Node node : gridPane.getChildren()) {
+                    if (node instanceof TextField) {
+                        try {
+                            serverList[indexOfServer].setTempProperties(((TextField)node).getText(), GridPane.getRowIndex(node));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                try{
+                    serverList[indexOfServer].saveProperties(/*propertiesTemp,properties*/);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        Button back = new Button("Go back");
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+
+                    primaryStage.setScene(serverSelectionScene(primaryStage));
+                    primaryStage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+        gridPane.add(back,1,i);
+        gridPane.add(save,0,i);
+
 
         Scene scene3 = new Scene(scrollPane,400,400);
         return scene3;
@@ -77,7 +123,7 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
                 @Override
                 public void handle(ActionEvent actionEvent) {
                     try {
-                        primaryStage.setScene(propertiesScene(Server.indexOf(serverList,tmp.getText())));
+                        primaryStage.setScene(propertiesScene(Server.indexOf(serverList,tmp.getText()),primaryStage));
                         primaryStage.show();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -115,4 +161,5 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
         Scene scene = new Scene(pane,400,600);
         return scene;
     }
+
 }

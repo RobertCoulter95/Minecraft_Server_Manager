@@ -18,7 +18,8 @@ public class Executor extends Application{
         File file = CurrentWorkingDirectory;
         String[] directories = file.list();
         for (int i=0;(i<directories.length) && (directories.length<=16);i++){
-            serverList[i]=new Server(directories[i]);
+            Server tmp = new Server(directories[i]);
+            serverList[i]=tmp;
         }
 
 
