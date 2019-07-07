@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import main.Server;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 public class Main extends Application {
 public static long numberOfServers;
 Scene scene2;
+static int i;
 public static Server[] serverList;
 public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("").toAbsolutePath()));
 
@@ -62,11 +64,10 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
         File file = CurrentWorkingDirectory;
         String[] directories = file.list();
         int numberOfDirectories = directories.length;
+        GridPane pane = new GridPane();
 
         int count = 0;
-        VBox box = new VBox();
-        box.setPadding(new Insets(50));
-        for (int i=0;i<numberOfDirectories;i++) {
+        for (i=0;i<numberOfDirectories;i++) {
             Button tmp = new Button();
             tmp.setPadding(new Insets(15));
             tmp.setMinSize(180, 70);
@@ -82,13 +83,36 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
                         e.printStackTrace();
                     }
                 }
+
             });
-            box.getChildren().addAll(tmp);
+
+            pane.add(tmp,0,i);
+            Button start = new Button("Start Server");
+            start.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    serverList[i].startServer();
+                }
+            });
+            Button stop = new Button("Stop Server");
+            stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    serverList[i].stopServer();
+                }
+            });
+
+            VBox vbox = new VBox();
+            vbox.setPadding(new Insets(10));
+            vbox.getChildren().addAll(start,stop);
+            vbox.setSpacing(5);
+            pane.add(vbox,1,i);
             if (++count == numberOfDirectories)
                 break;
 
         }
-        Scene scene = new Scene(box,400,600);
+        pane.setPadding(new Insets(15));
+        Scene scene = new Scene(pane,400,600);
         return scene;
     }
 }
