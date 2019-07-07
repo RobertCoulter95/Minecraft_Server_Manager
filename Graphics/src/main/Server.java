@@ -72,15 +72,20 @@ public class Server {
 
     }
 
-    public Object[] displayProperties() throws IOException {
+    public String[][] displayProperties() throws IOException {
         FileInputStream in = new FileInputStream(serverName + "/server.properties");
         Properties props = new Properties();
         props.load(in);
         in.close();
 
         FileOutputStream out = new FileOutputStream(serverName+"/server.properties");
-        Object[] key = props.stringPropertyNames().toArray();
-        System.out.println(key[8].toString());
+        int length = props.stringPropertyNames().toArray().length;
+        String[][] key = new String[2][length];
+
+        for(int i=0;i<length;i++){
+            key[0][i]=props.stringPropertyNames().toArray()[i].toString();
+            key[1][i]=props.get(key[0][i]).toString();
+        }
         props.store(out,null);
         out.close();
         return key;

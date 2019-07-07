@@ -4,13 +4,13 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import main.Server;
 
@@ -37,13 +37,22 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
 
 
     private Scene propertiesScene(int indexOfServer) throws IOException {
-        Object[] properties = serverList[indexOfServer].displayProperties();
-        VBox box = new VBox();
-        for (int i=0;i<properties.length;i++) {
-            Label tmp = new Label(properties[i].toString());
-            box.getChildren().add(tmp);
+        String[][] properties = serverList[indexOfServer].displayProperties();
+        GridPane gridPane = new GridPane();
+        ScrollPane scrollPane = new ScrollPane(gridPane);
+        int i =0;
+        for (i=0;i<properties[0].length;i++) {
+            Label tmp = new Label(properties[0][i]);
+            tmp.setPadding(new Insets(7));
+            TextField txt = new TextField();
+            txt.setText(properties[1][i]);
+            txt.setMaxWidth(150);
+            gridPane.add(tmp,0,i);
+            gridPane.add(txt,1,i);
         }
-        Scene scene3 = new Scene(box,400,400);
+        gridPane.add(new Button("Save Settings"),0,i);
+
+        Scene scene3 = new Scene(scrollPane,400,400);
         return scene3;
 
     }
