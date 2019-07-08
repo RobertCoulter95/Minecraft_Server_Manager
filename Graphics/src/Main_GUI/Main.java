@@ -113,12 +113,14 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
         GridPane pane = new GridPane();
 
         int count = 0;
+        System.out.println(directories[0]);
+        System.out.println(directories[1]);
         for (i=0;i<numberOfDirectories;i++) {
             Button tmp = new Button();
             tmp.setPadding(new Insets(15));
             tmp.setMinSize(180, 70);
             tmp.setMaxSize(180, 70);
-            tmp.setText(directories[count]);
+            tmp.setText(directories[count++]);
             tmp.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
@@ -131,13 +133,14 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
                 }
 
             });
-
+            VBox vbox = new VBox();
             pane.add(tmp,0,i);
             Button start = new Button("Start Server");
             start.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    serverList[i].startServer();
+                    int tmpNum = GridPane.getRowIndex(vbox);
+                    serverList[tmpNum].startServer();
                 }
             });
             Button stop = new Button("Stop Server");
@@ -148,12 +151,11 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
                 }
             });
 
-            VBox vbox = new VBox();
             vbox.setPadding(new Insets(10));
             vbox.getChildren().addAll(start,stop);
             vbox.setSpacing(5);
             pane.add(vbox,1,i);
-            if (++count == numberOfDirectories)
+            if (count == numberOfDirectories)
                 break;
 
         }

@@ -99,6 +99,7 @@ public class Server {
             public void run(){
                 ProcessBuilder pb = new ProcessBuilder(JavaLocation, "-jar", "server.jar", "Xmx512", "Xms512");
                 pb.directory(ServersDirectory);
+                System.out.println("Server " + serverName + " is starting");
                 try {
                     p = pb.start();
                 } catch (IOException e) {
