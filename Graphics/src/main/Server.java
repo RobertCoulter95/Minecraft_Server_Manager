@@ -25,6 +25,7 @@ public class Server {
     Properties temp;
     Process p;
     boolean hasSaved;
+    public boolean isRunning;
 
 
     public Server(String name) throws IOException {
@@ -97,6 +98,7 @@ public class Server {
     public void startServer(){
         Thread ThreadedServer = new Thread(){
             public void run(){
+                isRunning=true;
                 ProcessBuilder pb = new ProcessBuilder(JavaLocation, "-jar", "server.jar", "Xmx512", "Xms512");
                 pb.directory(ServersDirectory);
                 System.out.println("Server " + serverName + " is starting");
@@ -112,6 +114,7 @@ public class Server {
     }
 
     public void stopServer(){
+        isRunning = false;
         p.destroy();
     }
 

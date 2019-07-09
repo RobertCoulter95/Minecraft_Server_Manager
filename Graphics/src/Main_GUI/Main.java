@@ -115,6 +115,7 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
         int count = 0;
         System.out.println(directories[0]);
         System.out.println(directories[1]);
+
         for (i=0;i<numberOfDirectories;i++) {
             Button tmp = new Button();
             tmp.setPadding(new Insets(15));
@@ -159,6 +160,24 @@ public static File CurrentWorkingDirectory = new File(String.valueOf(Paths.get("
                 break;
 
         }
+        Button quit = new Button();
+        quit.setPadding(new Insets(15));
+        quit.setMinSize(180, 70);
+        quit.setMaxSize(180, 70);
+        quit.setText("QUIT");
+        quit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (int i=0;i<numberOfDirectories;i++) {
+                    if(serverList[i].isRunning)
+                        serverList[i].stopServer();
+                }
+                System.exit(0);
+            }
+
+        });
+        pane.add(quit,0,numberOfDirectories);
+
         pane.setPadding(new Insets(15));
         Scene scene = new Scene(pane,400,600);
         return scene;
